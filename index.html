@@ -13,6 +13,7 @@
             --text-dim: #94a3b8;
             --gold: #f59e0b;
             --glass: rgba(255, 255, 255, 0.03);
+            --overall-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
 
         body {
@@ -35,7 +36,6 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Modal Style */
         .modal {
             display: none;
             position: fixed;
@@ -74,15 +74,23 @@
             transition: 0.2s;
         }
 
-        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-danger {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
 
-        /* Season Tabs */
         .tabs-container {
             display: flex;
             gap: 12px;
             margin-bottom: 30px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 15px;
+            overflow-x: auto;
         }
 
         .tab {
@@ -92,7 +100,7 @@
             cursor: pointer;
             font-size: 0.9rem;
             color: var(--text-dim);
-            transition: 0.3s;
+            white-space: nowrap;
         }
 
         .tab.active {
@@ -101,10 +109,26 @@
             font-weight: bold;
         }
 
-        /* Summary Cards (Resumo por Competição) */
+        /* Summary Sections */
+        .overall-summary {
+            background: var(--overall-gradient);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,215,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .overall-summary h3 {
+            margin-top: 0;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+        }
+
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 40px;
         }
@@ -118,10 +142,9 @@
 
         .summary-card h4 {
             margin: 0 0 15px 0;
-            color: var(--gold);
+            color: var(--text-dim);
             text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+            font-size: 0.75rem;
         }
 
         .summary-stats {
@@ -129,11 +152,10 @@
             justify-content: space-between;
         }
 
-        .stat-item { text-align: center; }
-        .stat-item span { display: block; font-size: 0.7rem; color: var(--text-dim); }
-        .stat-item b { font-size: 1.2rem; }
+        .stat-item { text-align: center; flex: 1; }
+        .stat-item span { display: block; font-size: 0.65rem; color: var(--text-dim); margin-bottom: 4px; }
+        .stat-item b { font-size: 1.4rem; color: #fff; }
 
-        /* Form & Table */
         .form-section {
             background: var(--glass);
             padding: 20px;
@@ -144,7 +166,7 @@
             margin-bottom: 30px;
         }
 
-        input, select {
+        input {
             background: #2a2e35;
             border: 1px solid #3f444e;
             color: #fff;
@@ -152,11 +174,7 @@
             border-radius: 8px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
+        table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: var(--text-dim); font-size: 0.75rem; padding: 15px; border-bottom: 2px solid #333; }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
 
@@ -169,29 +187,41 @@
     <header>
         <div>
             <h1 id="pName">Portal do Atleta</h1>
-            <p id="pDetails" style="color: var(--text-dim)">Aguardando registro inicial...</p>
+            <p id="pDetails" style="color: var(--text-dim)">Carregando dados...</p>
         </div>
-        <button class="btn-main" id="btnInit" onclick="showModal('modalPlayer')">CADASTRAR JOGADOR</button>
-        <button class="btn-main hidden" id="btnSeason" onclick="showModal('modalSeason')">+ NOVA TEMPORADA</button>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-main" id="btnInit" onclick="showModal('modalPlayer')">CADASTRAR JOGADOR</button>
+            <button class="btn-main hidden" id="btnSeason" onclick="showModal('modalSeason')">+ NOVA TEMPORADA</button>
+            <button class="btn-danger" onclick="resetAll()">LIMPAR TUDO</button>
+        </div>
     </header>
 
     <div id="dashboard" class="hidden">
         <div class="tabs-container" id="seasonTabs"></div>
 
-        <h3 style="color: var(--text-dim); font-size: 0.9rem;">RESUMO DA TEMPORADA POR COMPETIÇÃO</h3>
-        <div class="summary-grid" id="summaryGrid">
-            <!-- Cards de resumo por competição aparecem aqui -->
+        <!-- RESUMO GERAL DA TEMPORADA ATIVA -->
+        <div class="overall-summary">
+            <h3>TOTAL DA TEMPORADA ATIVA</h3>
+            <div class="summary-stats" id="overallStats">
+                <div class="stat-item"><span>JOGOS</span><b id="ovGames">0</b></div>
+                <div class="stat-item"><span>GOLS</span><b id="ovGoals">0</b></div>
+                <div class="stat-item"><span>ASSISTÊNCIAS</span><b id="ovAssists">0</b></div>
+                <div class="stat-item"><span>PARTICIPAÇÕES</span><b id="ovTotal">0</b></div>
+            </div>
         </div>
+
+        <h3 style="color: var(--text-dim); font-size: 0.8rem; margin-bottom: 15px; letter-spacing: 1px;">POR COMPETIÇÃO</h3>
+        <div class="summary-grid" id="summaryGrid"></div>
 
         <div class="form-section">
             <input type="date" id="mDate">
-            <input type="text" id="mT1" placeholder="Casa">
-            <input type="text" id="mT2" placeholder="Fora">
+            <input type="text" id="mT1" placeholder="Time Casa">
+            <input type="text" id="mT2" placeholder="Time Fora">
             <input type="text" id="mScore" placeholder="Placar">
             <input type="text" id="mComp" placeholder="Competição">
             <input type="number" id="mG" placeholder="Gols">
             <input type="number" id="mA" placeholder="Assists">
-            <button class="btn-main" onclick="saveMatch()">SALVAR</button>
+            <button class="btn-main" onclick="saveMatch()">SALVAR JOGO</button>
         </div>
 
         <table>
@@ -214,7 +244,7 @@
 <div id="modalPlayer" class="modal">
     <div class="modal-content">
         <h2>Novo Atleta</h2>
-        <input type="text" id="inName" placeholder="Nome Completo" style="width:90%; margin-bottom:15px;">
+        <input type="text" id="inName" placeholder="Nome do Jogador" style="width:90%; margin-bottom:15px;">
         <input type="date" id="inBirth" style="width:90%; margin-bottom:20px;">
         <button class="btn-main" style="width:100%" onclick="initPlayer()">GRAVAR PERFIL</button>
     </div>
@@ -223,7 +253,7 @@
 <div id="modalSeason" class="modal">
     <div class="modal-content">
         <h2>Nova Temporada</h2>
-        <input type="text" id="inSeason" placeholder="Ex: 2025/26 - Europa" style="width:90%; margin-bottom:20px;">
+        <input type="text" id="inSeason" placeholder="Ex: 2026 - Marechal Lott" style="width:90%; margin-bottom:20px;">
         <button class="btn-main" style="width:100%" onclick="initSeason()">CRIAR</button>
     </div>
 </div>
@@ -231,37 +261,57 @@
 <script>
     let db = { player: null, seasons: {}, active: null };
 
+    window.onload = function() {
+        const saved = localStorage.getItem('marechal_lott_data');
+        if (saved) {
+            db = JSON.parse(saved);
+            if (db.player) {
+                renderPlayerHeader();
+                document.getElementById('btnInit').classList.add('hidden');
+                document.getElementById('btnSeason').classList.remove('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                updateUI();
+            }
+        } else {
+            document.getElementById('pDetails').innerText = "Aguardando registro inicial...";
+        }
+    };
+
+    function saveToLocalStorage() { localStorage.setItem('marechal_lott_data', JSON.stringify(db)); }
     function showModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
     function initPlayer() {
         const name = document.getElementById('inName').value;
         const birth = document.getElementById('inBirth').value;
         if(!name || !birth) return;
-
         db.player = { name, birth };
-        document.getElementById('pName').innerText = name;
-        document.getElementById('pDetails').innerText = `Nascido em ${birth.split('-')[0]}`;
-        
+        renderPlayerHeader();
         document.getElementById('btnInit').classList.add('hidden');
         document.getElementById('btnSeason').classList.remove('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
+        saveToLocalStorage();
         closeModal();
+    }
+
+    function renderPlayerHeader() {
+        document.getElementById('pName').innerText = db.player.name;
+        const year = db.player.birth.split('-')[0];
+        document.getElementById('pDetails').innerText = `Nascido em ${year}`;
     }
 
     function initSeason() {
         const sName = document.getElementById('inSeason').value;
         if(!sName || db.seasons[sName]) return;
-
         db.seasons[sName] = [];
         db.active = sName;
         updateUI();
+        saveToLocalStorage();
         closeModal();
     }
 
     function saveMatch() {
-        if(!db.active) return alert("Selecione uma temporada");
-        
+        if(!db.active) return;
         const match = {
             date: document.getElementById('mDate').value,
             t1: document.getElementById('mT1').value,
@@ -271,14 +321,15 @@
             g: parseInt(document.getElementById('mG').value) || 0,
             a: parseInt(document.getElementById('mA').value) || 0
         };
-
         db.seasons[db.active].push(match);
         updateUI();
+        saveToLocalStorage();
         document.querySelectorAll('.form-section input').forEach(i => i.value = '');
     }
 
     function updateUI() {
         renderTabs();
+        renderOverall();
         renderSummary();
         renderTable();
     }
@@ -290,36 +341,42 @@
             const btn = document.createElement('div');
             btn.className = `tab ${s === db.active ? 'active' : ''}`;
             btn.innerText = s;
-            btn.onclick = () => { db.active = s; updateUI(); };
+            btn.onclick = () => { db.active = s; updateUI(); saveToLocalStorage(); };
             container.appendChild(btn);
         });
+    }
+
+    function renderOverall() {
+        if(!db.active || !db.seasons[db.active]) return;
+        let tJ = 0, tG = 0, tA = 0;
+        db.seasons[db.active].forEach(m => {
+            tJ++; tG += m.g; tA += m.a;
+        });
+        document.getElementById('ovGames').innerText = tJ;
+        document.getElementById('ovGoals').innerText = tG;
+        document.getElementById('ovAssists').innerText = tA;
+        document.getElementById('ovTotal').innerText = tG + tA;
     }
 
     function renderSummary() {
         const grid = document.getElementById('summaryGrid');
         grid.innerHTML = '';
         if(!db.active) return;
-
         const summary = {};
         db.seasons[db.active].forEach(m => {
             if(!summary[m.comp]) summary[m.comp] = { j: 0, g: 0, a: 0 };
-            summary[m.comp].j += 1;
-            summary[m.comp].g += m.g;
-            summary[m.comp].a += m.a;
+            summary[m.comp].j++; summary[m.comp].g += m.g; summary[m.comp].a += m.a;
         });
-
         Object.keys(summary).forEach(comp => {
-            const data = summary[comp];
             grid.innerHTML += `
                 <div class="summary-card">
                     <h4>${comp}</h4>
                     <div class="summary-stats">
-                        <div class="stat-item"><span>JOGOS</span><b>${data.j}</b></div>
-                        <div class="stat-item"><span>GOLS</span><b>${data.g}</b></div>
-                        <div class="stat-item"><span>AST</span><b>${data.a}</b></div>
+                        <div class="stat-item"><span>J</span><b>${summary[comp].j}</b></div>
+                        <div class="stat-item"><span>G</span><b>${summary[comp].g}</b></div>
+                        <div class="stat-item"><span>A</span><b>${summary[comp].a}</b></div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     }
 
@@ -327,19 +384,23 @@
         const body = document.getElementById('matchTable');
         body.innerHTML = '';
         if(!db.active) return;
-
         db.seasons[db.active].slice().reverse().forEach(m => {
-            body.innerHTML += `
-                <tr>
-                    <td>${m.date}</td>
-                    <td style="color: var(--gold)">${m.comp}</td>
-                    <td>${m.t1} vs ${m.t2}</td>
-                    <td>${m.score}</td>
-                    <td>${m.g}</td>
-                    <td>${m.a}</td>
-                </tr>
-            `;
+            body.innerHTML += `<tr>
+                <td>${m.date}</td>
+                <td style="color:var(--gold)">${m.comp}</td>
+                <td>${m.t1} vs ${m.t2}</td>
+                <td>${m.score}</td>
+                <td style="font-weight:bold">${m.g}</td>
+                <td style="font-weight:bold">${m.a}</td>
+            </tr>`;
         });
+    }
+
+    function resetAll() {
+        if(confirm("Deseja apagar tudo?")) {
+            localStorage.removeItem('marechal_lott_data');
+            location.reload();
+        }
     }
 </script>
 </body>
