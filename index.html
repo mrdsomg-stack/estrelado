@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marechal Lott | Analytics Pro</title>
+    <title>Marechal Lott | Multi-Player Pro</title>
     <style>
         :root {
-            --bg-color: #121417;
+            --bg-color: #0f1113;
             --card-bg: #1c1f24;
             --accent-green: #00cba9;
             --text-main: #ffffff;
@@ -28,7 +28,7 @@
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             background: var(--card-bg);
             border-radius: 24px;
             padding: 30px;
@@ -36,12 +36,13 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(8px);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -51,7 +52,7 @@
             background: #25282e;
             padding: 40px;
             border-radius: 20px;
-            width: 380px;
+            width: 400px;
             text-align: center;
             border: 1px solid var(--accent-green);
         }
@@ -60,7 +61,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .btn-main {
@@ -74,94 +77,65 @@
             transition: 0.2s;
         }
 
-        .btn-danger {
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
+        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
 
-        .tabs-container {
+        /* Lista de Jogadores Sidebar/Top */
+        .player-selector {
             display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 25px;
             overflow-x: auto;
+            padding: 5px;
         }
 
-        .tab {
-            padding: 10px 20px;
-            border-radius: 30px;
+        .player-chip {
             background: var(--glass);
+            padding: 12px 20px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+            min-width: 120px;
+            text-align: center;
         }
 
-        .tab.active {
-            background: var(--gold);
-            color: #000;
-            font-weight: bold;
+        .player-chip.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 203, 169, 0.1);
         }
 
-        /* Summary Sections */
+        .player-chip h4 { margin: 0; font-size: 0.9rem; }
+        .player-chip span { font-size: 0.7rem; color: var(--text-dim); }
+
+        /* Dash Elements */
         .overall-summary {
             background: var(--overall-gradient);
             padding: 25px;
             border-radius: 20px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255,215,0,0.2);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .overall-summary h3 {
-            margin-top: 0;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            color: var(--gold);
+            border: 1px solid rgba(255,215,0,0.1);
         }
 
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .summary-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            background: rgba(255,255,255,0.03);
             padding: 20px;
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05);
         }
-
-        .summary-card h4 {
-            margin: 0 0 15px 0;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
-
-        .summary-stats {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .stat-item { text-align: center; flex: 1; }
-        .stat-item span { display: block; font-size: 0.65rem; color: var(--text-dim); margin-bottom: 4px; }
-        .stat-item b { font-size: 1.4rem; color: #fff; }
 
         .form-section {
             background: var(--glass);
             padding: 20px;
             border-radius: 16px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
             gap: 10px;
             margin-bottom: 30px;
         }
@@ -170,13 +144,31 @@
             background: #2a2e35;
             border: 1px solid #3f444e;
             color: #fff;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; color: var(--text-dim); font-size: 0.75rem; padding: 15px; border-bottom: 2px solid #333; }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: var(--glass);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .tab.active { background: var(--gold); color: #000; font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; color: var(--text-dim); font-size: 0.7rem; padding: 15px; border-bottom: 2px solid #333; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
 
         .hidden { display: none; }
     </style>
@@ -186,42 +178,45 @@
 <div class="container">
     <header>
         <div>
-            <h1 id="pName">Portal do Atleta</h1>
-            <p id="pDetails" style="color: var(--text-dim)">Carregando dados...</p>
+            <h1 id="viewTitle">Player Management</h1>
+            <p id="viewSubtitle" style="color: var(--text-dim)">Gerencie seus atletas e temporadas</p>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-main" id="btnInit" onclick="showModal('modalPlayer')">CADASTRAR JOGADOR</button>
+            <button class="btn-main" onclick="showModal('modalPlayer')">+ NOVO JOGADOR</button>
             <button class="btn-main hidden" id="btnSeason" onclick="showModal('modalSeason')">+ NOVA TEMPORADA</button>
-            <button class="btn-danger" onclick="resetAll()">LIMPAR TUDO</button>
         </div>
     </header>
 
-    <div id="dashboard" class="hidden">
+    <!-- Lista de Jogadores -->
+    <div class="player-selector" id="playerList">
+        <!-- Jogadores cadastrados aqui -->
+    </div>
+
+    <!-- Dashboard Principal -->
+    <div id="mainDashboard" class="hidden">
         <div class="tabs-container" id="seasonTabs"></div>
 
-        <!-- RESUMO GERAL DA TEMPORADA ATIVA -->
         <div class="overall-summary">
-            <h3>TOTAL DA TEMPORADA ATIVA</h3>
-            <div class="summary-stats" id="overallStats">
-                <div class="stat-item"><span>JOGOS</span><b id="ovGames">0</b></div>
-                <div class="stat-item"><span>GOLS</span><b id="ovGoals">0</b></div>
-                <div class="stat-item"><span>ASSISTÊNCIAS</span><b id="ovAssists">0</b></div>
-                <div class="stat-item"><span>PARTICIPAÇÕES</span><b id="ovTotal">0</b></div>
+            <h3 style="margin-top:0; font-size: 0.75rem; letter-spacing: 2px; color: var(--gold);">RESUMO GERAL</h3>
+            <div style="display: flex; justify-content: space-around; text-align: center;">
+                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">JOGOS</span><b id="ovGames" style="font-size:1.5rem">0</b></div>
+                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">GOLS</span><b id="ovGoals" style="font-size:1.5rem">0</b></div>
+                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">ASSISTS</span><b id="ovAssists" style="font-size:1.5rem">0</b></div>
+                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">PARTICIPAÇÕES</span><b id="ovTotal" style="font-size:1.5rem">0</b></div>
             </div>
         </div>
 
-        <h3 style="color: var(--text-dim); font-size: 0.8rem; margin-bottom: 15px; letter-spacing: 1px;">POR COMPETIÇÃO</h3>
-        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="summary-grid" id="compSummary"></div>
 
         <div class="form-section">
             <input type="date" id="mDate">
-            <input type="text" id="mT1" placeholder="Time Casa">
-            <input type="text" id="mT2" placeholder="Time Fora">
+            <input type="text" id="mT1" placeholder="Time A">
+            <input type="text" id="mT2" placeholder="Time B">
             <input type="text" id="mScore" placeholder="Placar">
             <input type="text" id="mComp" placeholder="Competição">
-            <input type="number" id="mG" placeholder="Gols">
-            <input type="number" id="mA" placeholder="Assists">
-            <button class="btn-main" onclick="saveMatch()">SALVAR JOGO</button>
+            <input type="number" id="mG" placeholder="G">
+            <input type="number" id="mA" placeholder="A">
+            <button class="btn-main" onclick="addMatch()">SALVAR</button>
         </div>
 
         <table>
@@ -231,8 +226,8 @@
                     <th>COMPETIÇÃO</th>
                     <th>CONFRONTO</th>
                     <th>RESULTADO</th>
-                    <th>GOLS</th>
-                    <th>AST</th>
+                    <th>G</th>
+                    <th>A</th>
                 </tr>
             </thead>
             <tbody id="matchTable"></tbody>
@@ -243,75 +238,115 @@
 <!-- Modais -->
 <div id="modalPlayer" class="modal">
     <div class="modal-content">
-        <h2>Novo Atleta</h2>
-        <input type="text" id="inName" placeholder="Nome do Jogador" style="width:90%; margin-bottom:15px;">
-        <input type="date" id="inBirth" style="width:90%; margin-bottom:20px;">
-        <button class="btn-main" style="width:100%" onclick="initPlayer()">GRAVAR PERFIL</button>
+        <h2>Cadastrar Atleta</h2>
+        <input type="text" id="pNameInput" placeholder="Nome do Jogador" style="margin-bottom:15px;">
+        <input type="date" id="pBirthInput" style="margin-bottom:20px;">
+        <button class="btn-main" style="width:100%" onclick="savePlayer()">SALVAR JOGADOR</button>
     </div>
 </div>
 
 <div id="modalSeason" class="modal">
     <div class="modal-content">
         <h2>Nova Temporada</h2>
-        <input type="text" id="inSeason" placeholder="Ex: 2026 - Marechal Lott" style="width:90%; margin-bottom:20px;">
-        <button class="btn-main" style="width:100%" onclick="initSeason()">CRIAR</button>
+        <input type="text" id="sNameInput" placeholder="Ex: Temporada 2026" style="margin-bottom:20px;">
+        <button class="btn-main" style="width:100%" onclick="saveSeason()">CRIAR</button>
     </div>
 </div>
 
 <script>
-    let db = { player: null, seasons: {}, active: null };
+    // State management
+    let state = {
+        players: [], // [{ name, birth, seasons: { '2026': [] } }]
+        activePlayerIdx: null,
+        activeSeason: null
+    };
 
-    window.onload = function() {
-        const saved = localStorage.getItem('marechal_lott_data');
-        if (saved) {
-            db = JSON.parse(saved);
-            if (db.player) {
-                renderPlayerHeader();
-                document.getElementById('btnInit').classList.add('hidden');
-                document.getElementById('btnSeason').classList.remove('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                updateUI();
-            }
-        } else {
-            document.getElementById('pDetails').innerText = "Aguardando registro inicial...";
+    window.onload = () => {
+        const saved = localStorage.getItem('marechal_lott_v2');
+        if(saved) {
+            state = JSON.parse(saved);
+            renderPlayerList();
+            if(state.activePlayerIdx !== null) selectPlayer(state.activePlayerIdx);
         }
     };
 
-    function saveToLocalStorage() { localStorage.setItem('marechal_lott_data', JSON.stringify(db)); }
+    function save() { localStorage.setItem('marechal_lott_v2', JSON.stringify(state)); }
+
     function showModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
-    function initPlayer() {
-        const name = document.getElementById('inName').value;
-        const birth = document.getElementById('inBirth').value;
+    function savePlayer() {
+        const name = document.getElementById('pNameInput').value;
+        const birth = document.getElementById('pBirthInput').value;
         if(!name || !birth) return;
-        db.player = { name, birth };
-        renderPlayerHeader();
-        document.getElementById('btnInit').classList.add('hidden');
+
+        state.players.push({ name, birth, seasons: {} });
+        save();
+        renderPlayerList();
+        closeModal();
+    }
+
+    function renderPlayerList() {
+        const list = document.getElementById('playerList');
+        list.innerHTML = '';
+        state.players.forEach((p, idx) => {
+            const chip = document.createElement('div');
+            chip.className = `player-chip ${idx === state.activePlayerIdx ? 'active' : ''}`;
+            chip.innerHTML = `<h4>${p.name}</h4><span>${p.birth.split('-')[0]}</span>`;
+            chip.onclick = () => selectPlayer(idx);
+            list.appendChild(chip);
+        });
+    }
+
+    function selectPlayer(idx) {
+        state.activePlayerIdx = idx;
+        const player = state.players[idx];
+        document.getElementById('viewTitle').innerText = player.name;
         document.getElementById('btnSeason').classList.remove('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        saveToLocalStorage();
+        document.getElementById('mainDashboard').classList.remove('hidden');
+        
+        // Auto-select first season if exists
+        const seasonKeys = Object.keys(player.seasons);
+        if(seasonKeys.length > 0 && !state.activeSeason) {
+            state.activeSeason = seasonKeys[0];
+        } else if (seasonKeys.length === 0) {
+            state.activeSeason = null;
+        }
+
+        renderPlayerList();
+        renderTabs();
+        updateStats();
+        save();
+    }
+
+    function saveSeason() {
+        const name = document.getElementById('sNameInput').value;
+        if(!name) return;
+        const player = state.players[state.activePlayerIdx];
+        if(!player.seasons[name]) player.seasons[name] = [];
+        state.activeSeason = name;
+        save();
+        renderTabs();
+        updateStats();
         closeModal();
     }
 
-    function renderPlayerHeader() {
-        document.getElementById('pName').innerText = db.player.name;
-        const year = db.player.birth.split('-')[0];
-        document.getElementById('pDetails').innerText = `Nascido em ${year}`;
+    function renderTabs() {
+        const container = document.getElementById('seasonTabs');
+        container.innerHTML = '';
+        if(state.activePlayerIdx === null) return;
+        const player = state.players[state.activePlayerIdx];
+        Object.keys(player.seasons).forEach(s => {
+            const t = document.createElement('div');
+            t.className = `tab ${s === state.activeSeason ? 'active' : ''}`;
+            t.innerText = s;
+            t.onclick = () => { state.activeSeason = s; renderTabs(); updateStats(); save(); };
+            container.appendChild(t);
+        });
     }
 
-    function initSeason() {
-        const sName = document.getElementById('inSeason').value;
-        if(!sName || db.seasons[sName]) return;
-        db.seasons[sName] = [];
-        db.active = sName;
-        updateUI();
-        saveToLocalStorage();
-        closeModal();
-    }
-
-    function saveMatch() {
-        if(!db.active) return;
+    function addMatch() {
+        if(!state.activeSeason) return alert("Crie uma temporada primeiro!");
         const match = {
             date: document.getElementById('mDate').value,
             t1: document.getElementById('mT1').value,
@@ -321,86 +356,66 @@
             g: parseInt(document.getElementById('mG').value) || 0,
             a: parseInt(document.getElementById('mA').value) || 0
         };
-        db.seasons[db.active].push(match);
-        updateUI();
-        saveToLocalStorage();
+        state.players[state.activePlayerIdx].seasons[state.activeSeason].push(match);
+        save();
+        updateStats();
         document.querySelectorAll('.form-section input').forEach(i => i.value = '');
     }
 
-    function updateUI() {
-        renderTabs();
-        renderOverall();
-        renderSummary();
-        renderTable();
-    }
+    function updateStats() {
+        const table = document.getElementById('matchTable');
+        const summary = document.getElementById('compSummary');
+        table.innerHTML = '';
+        summary.innerHTML = '';
 
-    function renderTabs() {
-        const container = document.getElementById('seasonTabs');
-        container.innerHTML = '';
-        Object.keys(db.seasons).forEach(s => {
-            const btn = document.createElement('div');
-            btn.className = `tab ${s === db.active ? 'active' : ''}`;
-            btn.innerText = s;
-            btn.onclick = () => { db.active = s; updateUI(); saveToLocalStorage(); };
-            container.appendChild(btn);
-        });
-    }
+        if(!state.activeSeason) return;
+        
+        let games = state.players[state.activePlayerIdx].seasons[state.activeSeason];
+        
+        // ORDEM CRESCENTE POR DATA
+        games.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    function renderOverall() {
-        if(!db.active || !db.seasons[db.active]) return;
-        let tJ = 0, tG = 0, tA = 0;
-        db.seasons[db.active].forEach(m => {
-            tJ++; tG += m.g; tA += m.a;
-        });
-        document.getElementById('ovGames').innerText = tJ;
-        document.getElementById('ovGoals').innerText = tG;
-        document.getElementById('ovAssists').innerText = tA;
-        document.getElementById('ovTotal').innerText = tG + tA;
-    }
+        let ovG = 0, ovA = 0, ovJ = games.length;
+        let comps = {};
 
-    function renderSummary() {
-        const grid = document.getElementById('summaryGrid');
-        grid.innerHTML = '';
-        if(!db.active) return;
-        const summary = {};
-        db.seasons[db.active].forEach(m => {
-            if(!summary[m.comp]) summary[m.comp] = { j: 0, g: 0, a: 0 };
-            summary[m.comp].j++; summary[m.comp].g += m.g; summary[m.comp].a += m.a;
+        games.forEach(g => {
+            ovG += g.g; ovA += g.a;
+            if(!comps[g.comp]) comps[g.comp] = { j: 0, g: 0, a: 0 };
+            comps[g.comp].j++; comps[g.comp].g += g.g; comps[g.comp].a += g.a;
+
+            // FORMATO DIA/MES/ANO
+            const d = g.date.split('-');
+            const formattedDate = d.length === 3 ? `${d[2]}/${d[1]}/${d[0]}` : g.date;
+
+            table.innerHTML += `
+                <tr>
+                    <td>${formattedDate}</td>
+                    <td style="color:var(--gold)">${g.comp}</td>
+                    <td>${g.t1} vs ${g.t2}</td>
+                    <td>${g.score}</td>
+                    <td>${g.g}</td>
+                    <td>${g.a}</td>
+                </tr>
+            `;
         });
-        Object.keys(summary).forEach(comp => {
-            grid.innerHTML += `
+
+        document.getElementById('ovGames').innerText = ovJ;
+        document.getElementById('ovGoals').innerText = ovG;
+        document.getElementById('ovAssists').innerText = ovA;
+        document.getElementById('ovTotal').innerText = ovG + ovA;
+
+        Object.keys(comps).forEach(c => {
+            summary.innerHTML += `
                 <div class="summary-card">
-                    <h4>${comp}</h4>
-                    <div class="summary-stats">
-                        <div class="stat-item"><span>J</span><b>${summary[comp].j}</b></div>
-                        <div class="stat-item"><span>G</span><b>${summary[comp].g}</b></div>
-                        <div class="stat-item"><span>A</span><b>${summary[comp].a}</b></div>
+                    <span style="font-size:0.65rem; color:var(--text-dim)">${c}</span>
+                    <div style="display:flex; justify-content:space-between; margin-top:8px;">
+                        <span>J: <b>${comps[c].j}</b></span>
+                        <span>G: <b>${comps[c].g}</b></span>
+                        <span>A: <b>${comps[c].a}</b></span>
                     </div>
-                </div>`;
+                </div>
+            `;
         });
-    }
-
-    function renderTable() {
-        const body = document.getElementById('matchTable');
-        body.innerHTML = '';
-        if(!db.active) return;
-        db.seasons[db.active].slice().reverse().forEach(m => {
-            body.innerHTML += `<tr>
-                <td>${m.date}</td>
-                <td style="color:var(--gold)">${m.comp}</td>
-                <td>${m.t1} vs ${m.t2}</td>
-                <td>${m.score}</td>
-                <td style="font-weight:bold">${m.g}</td>
-                <td style="font-weight:bold">${m.a}</td>
-            </tr>`;
-        });
-    }
-
-    function resetAll() {
-        if(confirm("Deseja apagar tudo?")) {
-            localStorage.removeItem('marechal_lott_data');
-            location.reload();
-        }
     }
 </script>
 </body>
