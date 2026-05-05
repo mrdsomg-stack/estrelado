@@ -26,292 +26,289 @@
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
             background: var(--card-bg);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             border: 1px solid rgba(255,255,255,0.05);
         }
 
+        /* Modais e Overlays */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            border: 1px solid var(--accent-green);
+        }
+
+        /* Header */
         header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 20px;
         }
 
-        .player-info h1 {
-            font-size: 2.5rem;
-            margin: 0;
-        }
-
-        .player-info p {
-            color: var(--text-dim);
-            margin-top: 5px;
-        }
-
-        .btn-exit {
+        .btn-action {
             background-color: var(--accent-green);
             color: #000;
             border: none;
-            padding: 10px 25px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            margin-left: 10px;
         }
 
-        /* Dashboard Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .stat-label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--gold);
-        }
-
-        /* Formulários */
-        .section-title {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.02);
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        input, select {
-            background: #2a2e35;
-            border: 1px solid #3f444e;
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--accent-green);
-        }
-
-        button.add-btn {
+        .btn-secondary {
             background: transparent;
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
-            padding: 10px;
-            border-radius: 6px;
+            border: 1px solid var(--text-dim);
+            color: var(--text-dim);
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            width: 100%;
+        }
+
+        /* Tabs/Temporadas */
+        .season-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .season-tab {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
             transition: 0.3s;
         }
 
-        button.add-btn:hover {
-            background: var(--accent-green);
+        .season-tab.active {
+            background: var(--gold);
             color: #000;
+            font-weight: bold;
         }
 
-        /* Tabela de Jogos */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
+        /* Inputs */
+        input, select {
+            width: 100%;
+            background: #2a2e35;
+            border: 1px solid #3f444e;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Tabela */
         table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
+            margin-top: 20px;
         }
 
         th {
+            text-align: left;
             color: var(--text-dim);
             font-size: 0.8rem;
-            padding: 15px;
+            padding: 12px;
             border-bottom: 1px solid #3f444e;
         }
 
         td {
-            padding: 15px;
+            padding: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .tag-comp {
-            font-size: 0.7rem;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <div class="player-info">
-            <h1 id="displayName">Novo Jogador</h1>
-            <p id="displayAge">Aguardando cadastro...</p>
+        <div>
+            <h1 id="playerHeader">Nenhum Atleta</h1>
+            <p id="ageHeader">Cadastre o jogador para iniciar.</p>
         </div>
-        <button class="btn-exit" onclick="location.reload()">REINICIAR</button>
+        <div>
+            <button class="btn-secondary" id="btnCadastrarJogador" onclick="openModal('modalAtleta')">Cadastrar Jogador</button>
+            <button class="btn-action hidden" id="btnNovaTemporada" onclick="openModal('modalTemporada')">Nova Temporada</button>
+        </div>
     </header>
 
-    <!-- Cadastro Inicial -->
-    <div class="section-title">Cadastro do Atleta</div>
-    <div class="form-row">
+    <!-- Painel de Temporadas -->
+    <div id="mainPanel" class="hidden">
+        <div class="season-tabs" id="seasonTabs">
+            <!-- Abas de Temporada entram aqui -->
+        </div>
+
+        <div id="seasonContent">
+            <div class="section-title" style="color: var(--text-dim); margin-bottom: 10px;">REGISTRAR JOGO NA TEMPORADA <span id="currentSeasonName"></span></div>
+            <div class="form-grid">
+                <input type="date" id="matchDate">
+                <input type="text" id="team1" placeholder="Time A">
+                <input type="text" id="team2" placeholder="Time B">
+                <input type="text" id="score" placeholder="Placar">
+                <input type="text" id="comp" placeholder="Competição">
+                <input type="number" id="goals" placeholder="Gols">
+                <input type="number" id="assists" placeholder="Assists">
+                <button class="btn-action" onclick="addGame()">+ Salvar Jogo</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>DATA</th>
+                        <th>COMPETIÇÃO</th>
+                        <th>JOGO</th>
+                        <th>PLACAR</th>
+                        <th>G</th>
+                        <th>A</th>
+                    </tr>
+                </thead>
+                <tbody id="gameTableBody">
+                    <!-- Jogos da temporada ativa -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cadastro Atleta -->
+<div id="modalAtleta" class="modal">
+    <div class="modal-content">
+        <h3>Cadastrar Atleta</h3>
         <input type="text" id="nameInput" placeholder="Nome do Jogador">
         <input type="date" id="birthInput">
-        <button class="add-btn" onclick="setProfile()">Definir Perfil</button>
+        <button class="btn-action" style="width: 100%" onclick="saveAtleta()">Finalizar Cadastro</button>
     </div>
+</div>
 
-    <!-- Dashboard -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-label">Jogos</span>
-            <span class="stat-value" id="totalGames">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">Gols</span>
-            <span class="stat-value" id="totalGoals">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">Assistências</span>
-            <span class="stat-value" id="totalAssists">0</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">Competições</span>
-            <span class="stat-value" id="totalComps">0</span>
-        </div>
-    </div>
-
-    <!-- Cadastro de Partida -->
-    <div class="section-title">Registrar Nova Partida</div>
-    <div class="form-row">
-        <input type="date" id="matchDate">
-        <input type="text" id="team1" placeholder="Time Casa">
-        <input type="text" id="team2" placeholder="Time Fora">
-        <input type="text" id="score" placeholder="Placar (ex: 2-1)">
-        <select id="competition">
-            <option value="Liga Nacional">Liga Nacional</option>
-            <option value="Copa">Copa</option>
-            <option value="Champions">Champions</option>
-            <option value="Amistoso">Amistoso</option>
-        </select>
-        <input type="number" id="goals" placeholder="Gols" min="0">
-        <input type="number" id="assists" placeholder="Assists" min="0">
-        <button class="add-btn" onclick="addMatch()">+ Adicionar Jogo</button>
-    </div>
-
-    <!-- Tabela de Temporada -->
-    <div class="section-title">Histórico da Temporada</div>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>DATA</th>
-                    <th>COMPETIÇÃO</th>
-                    <th>PARTIDA</th>
-                    <th>PLACAR</th>
-                    <th>G</th>
-                    <th>A</th>
-                </tr>
-            </thead>
-            <tbody id="matchTableBody">
-                <!-- Jogos aparecerão aqui -->
-            </tbody>
-        </table>
+<!-- Modal Nova Temporada -->
+<div id="modalTemporada" class="modal">
+    <div class="modal-content">
+        <h3>Nome da Temporada</h3>
+        <input type="text" id="seasonNameInput" placeholder="Ex: Temporada 2026 ou Europa">
+        <button class="btn-action" style="width: 100%" onclick="saveSeason()">Criar Temporada</button>
     </div>
 </div>
 
 <script>
-    let stats = {
-        games: 0,
-        goals: 0,
-        assists: 0,
-        competitions: new Set()
-    };
+    let player = null;
+    let seasons = {}; // Objeto para guardar jogos por temporada { "2026": [] }
+    let activeSeason = null;
 
-    function setProfile() {
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function saveAtleta() {
         const name = document.getElementById('nameInput').value;
         const birth = document.getElementById('birthInput').value;
+        if(!name || !birth) return;
 
-        if(!name || !birth) return alert("Preencha nome e data!");
-
-        document.getElementById('displayName').innerText = name;
+        player = { name, birth };
+        document.getElementById('playerHeader').innerText = name;
         
-        // Cálculo de idade simples
-        const birthDate = new Date(birth);
-        const age = new Date().getFullYear() - birthDate.getFullYear();
-        document.getElementById('displayAge').innerText = `Nascido em ${birthDate.getFullYear()} (${age} anos)`;
+        const age = new Date().getFullYear() - new Date(birth).getFullYear();
+        document.getElementById('ageHeader').innerText = `Nascido em ${birth.split('-')[0]} (${age} anos)`;
+        
+        document.getElementById('btnCadastrarJogador').classList.add('hidden');
+        document.getElementById('btnNovaTemporada').classList.remove('hidden');
+        document.getElementById('mainPanel').classList.remove('hidden');
+        closeModal('modalAtleta');
     }
 
-    function addMatch() {
-        const date = document.getElementById('matchDate').value;
-        const t1 = document.getElementById('team1').value;
-        const t2 = document.getElementById('team2').value;
-        const score = document.getElementById('score').value;
-        const comp = document.getElementById('competition').value;
-        const goals = parseInt(document.getElementById('goals').value) || 0;
-        const assists = parseInt(document.getElementById('assists').value) || 0;
+    function saveSeason() {
+        const sName = document.getElementById('seasonNameInput').value;
+        if(!sName || seasons[sName]) return;
 
-        if(!date || !t1 || !t2) return alert("Preencha os dados da partida!");
+        seasons[sName] = [];
+        activeSeason = sName;
+        renderTabs();
+        renderGames();
+        closeModal('modalTemporada');
+    }
 
-        // Atualiza Lógica
-        stats.games++;
-        stats.goals += goals;
-        stats.assists += assists;
-        stats.competitions.add(comp);
+    function renderTabs() {
+        const container = document.getElementById('seasonTabs');
+        container.innerHTML = '';
+        Object.keys(seasons).forEach(s => {
+            const div = document.createElement('div');
+            div.className = `season-tab ${s === activeSeason ? 'active' : ''}`;
+            div.innerText = s;
+            div.onclick = () => { activeSeason = s; renderTabs(); renderGames(); };
+            container.appendChild(div);
+        });
+        document.getElementById('currentSeasonName').innerText = activeSeason;
+    }
 
-        // Atualiza UI Dashboard
-        document.getElementById('totalGames').innerText = stats.games;
-        document.getElementById('totalGoals').innerText = stats.goals;
-        document.getElementById('totalAssists').innerText = stats.assists;
-        document.getElementById('totalComps').innerText = stats.competitions.size;
+    function addGame() {
+        if(!activeSeason) return alert("Crie ou selecione uma temporada primeiro!");
+        
+        const game = {
+            date: document.getElementById('matchDate').value,
+            t1: document.getElementById('team1').value,
+            t2: document.getElementById('team2').value,
+            score: document.getElementById('score').value,
+            comp: document.getElementById('comp').value,
+            g: document.getElementById('goals').value || 0,
+            a: document.getElementById('assists').value || 0
+        };
 
-        // Adiciona na Tabela
-        const tbody = document.getElementById('matchTableBody');
-        const row = `
-            <tr>
-                <td>${date.split('-').reverse().join('/')}</td>
-                <td><span class="tag-comp">${comp}</span></td>
-                <td>${t1} vs ${t2}</td>
-                <td>${score}</td>
-                <td style="color: var(--gold)">${goals}</td>
-                <td style="color: var(--gold)">${assists}</td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
+        seasons[activeSeason].push(game);
+        renderGames();
+        
+        // Limpar campos
+        document.querySelectorAll('.form-grid input').forEach(i => i.value = '');
+    }
 
-        // Limpa campos de desempenho
-        document.getElementById('goals').value = '';
-        document.getElementById('assists').value = '';
+    function renderGames() {
+        const tbody = document.getElementById('gameTableBody');
+        tbody.innerHTML = '';
+        if(!activeSeason) return;
+
+        seasons[activeSeason].forEach(g => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${g.date}</td>
+                    <td style="color:var(--gold)">${g.comp}</td>
+                    <td>${g.t1} vs ${g.t2}</td>
+                    <td>${g.score}</td>
+                    <td style="font-weight:bold">${g.g}</td>
+                    <td style="font-weight:bold">${g.a}</td>
+                </tr>
+            `;
+        });
     }
 </script>
 
