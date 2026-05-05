@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marechal Lott | Gestão Total</title>
+    <title>Marechal Lott | Gestão por Temporada</title>
     <style>
         :root {
             --bg-color: #0f1113;
@@ -74,7 +74,6 @@
             border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .player-selector {
@@ -100,12 +99,40 @@
             background: rgba(0, 203, 169, 0.1);
         }
 
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: var(--glass);
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .tab.active { background: var(--gold); color: #000; font-weight: bold; }
+
         .overall-summary {
             background: var(--overall-gradient);
             padding: 25px;
             border-radius: 20px;
             margin-bottom: 20px;
             border: 1px solid rgba(255,215,0,0.1);
+        }
+
+        .club-badge {
+            color: var(--gold);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
         .summary-grid {
@@ -142,29 +169,13 @@
             box-sizing: border-box;
         }
 
-        .tabs-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 8px 18px;
-            border-radius: 20px;
-            background: var(--glass);
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .tab.active { background: var(--gold); color: #000; font-weight: bold; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; color: var(--text-dim); font-size: 0.7rem; padding: 15px; border-bottom: 2px solid #333; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--text-dim); font-size: 0.7rem; padding: 15px; border-bottom: 2px solid #333; }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
 
-        .actions { display: flex; gap: 8px; }
-        .btn-edit { color: var(--gold); cursor: pointer; background: none; border: none; font-size: 1rem; }
-        .btn-delete { color: var(--danger); cursor: pointer; background: none; border: none; font-size: 1rem; }
+        .actions button { background: none; border: none; cursor: pointer; font-size: 1rem; }
+        .btn-edit { color: var(--gold); }
+        .btn-delete { color: var(--danger); }
 
         .hidden { display: none; }
     </style>
@@ -174,8 +185,8 @@
 <div class="container">
     <header>
         <div>
-            <h1 id="viewTitle">Gestão de Atletas</h1>
-            <p id="viewSubtitle" style="color: var(--text-dim)">Acompanhe o Marechal Lott City</p>
+            <h1 id="viewTitle">Seleção de Atleta</h1>
+            <p id="viewSubtitle" style="color: var(--text-dim)">Gerencie temporadas e clubes</p>
         </div>
         <div style="display: flex; gap: 10px;">
             <button class="btn-main" onclick="showModal('modalPlayer')">+ NOVO JOGADOR</button>
@@ -186,49 +197,54 @@
     <div class="player-selector" id="playerList"></div>
 
     <div id="mainDashboard" class="hidden">
+        <!-- Navegação de Temporadas -->
         <div class="tabs-container" id="seasonTabs"></div>
 
-        <div class="overall-summary">
-            <h3 style="margin-top:0; font-size: 0.75rem; letter-spacing: 2px; color: var(--gold);">RESUMO GERAL</h3>
-            <div style="display: flex; justify-content: space-around; text-align: center;">
-                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">JOGOS</span><b id="ovGames" style="font-size:1.5rem">0</b></div>
-                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">GOLS</span><b id="ovGoals" style="font-size:1.5rem">0</b></div>
-                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">ASSISTS</span><b id="ovAssists" style="font-size:1.5rem">0</b></div>
-                <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">PARTICIPAÇÕES</span><b id="ovTotal" style="font-size:1.5rem">0</b></div>
+        <div id="seasonContent" class="hidden">
+            <div class="club-badge">CLUBE: <span id="displayClub">---</span></div>
+            
+            <div class="overall-summary">
+                <h3 style="margin-top:0; font-size: 0.75rem; letter-spacing: 2px; color: var(--gold);">RESUMO DA TEMPORADA</h3>
+                <div style="display: flex; justify-content: space-around; text-align: center;">
+                    <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">JOGOS</span><b id="ovGames" style="font-size:1.5rem">0</b></div>
+                    <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">GOLS</span><b id="ovGoals" style="font-size:1.5rem">0</b></div>
+                    <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">ASSISTS</span><b id="ovAssists" style="font-size:1.5rem">0</b></div>
+                    <div><span style="display:block; font-size:0.65rem; color:var(--text-dim)">PARTICIPAÇÕES</span><b id="ovTotal" style="font-size:1.5rem">0</b></div>
+                </div>
             </div>
+
+            <div class="summary-grid" id="compSummary"></div>
+
+            <div class="form-section">
+                <input type="date" id="mDate">
+                <input type="text" id="mT1" placeholder="Time A">
+                <input type="text" id="mT2" placeholder="Time B">
+                <input type="text" id="mScore" placeholder="Placar">
+                <input type="text" id="mComp" placeholder="Competição">
+                <input type="number" id="mG" placeholder="G">
+                <input type="number" id="mA" placeholder="A">
+                <button class="btn-main" onclick="addMatch()">SALVAR</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>DATA</th>
+                        <th>COMPETIÇÃO</th>
+                        <th>CONFRONTO</th>
+                        <th>RESULTADO</th>
+                        <th>G</th>
+                        <th>A</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody id="matchTable"></tbody>
+            </table>
         </div>
-
-        <div class="summary-grid" id="compSummary"></div>
-
-        <div class="form-section">
-            <input type="date" id="mDate">
-            <input type="text" id="mT1" placeholder="Time A">
-            <input type="text" id="mT2" placeholder="Time B">
-            <input type="text" id="mScore" placeholder="Placar">
-            <input type="text" id="mComp" placeholder="Competição">
-            <input type="number" id="mG" placeholder="G">
-            <input type="number" id="mA" placeholder="A">
-            <button class="btn-main" onclick="addMatch()">SALVAR</button>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>DATA</th>
-                    <th>COMPETIÇÃO</th>
-                    <th>CONFRONTO</th>
-                    <th>RESULTADO</th>
-                    <th>G</th>
-                    <th>A</th>
-                    <th>AÇÕES</th>
-                </tr>
-            </thead>
-            <tbody id="matchTable"></tbody>
-        </table>
     </div>
 </div>
 
-<!-- Modal Cadastro Atleta -->
+<!-- Modal Jogador -->
 <div id="modalPlayer" class="modal">
     <div class="modal-content">
         <h2>Cadastrar Atleta</h2>
@@ -238,12 +254,13 @@
     </div>
 </div>
 
-<!-- Modal Nova Temporada -->
+<!-- Modal Temporada -->
 <div id="modalSeason" class="modal">
     <div class="modal-content">
-        <h2>Nova Temporada</h2>
-        <input type="text" id="sNameInput" placeholder="Ex: 2026" style="margin-bottom:20px;">
-        <button class="btn-main" style="width:100%" onclick="saveSeason()">CRIAR</button>
+        <h2>Vincular Temporada</h2>
+        <input type="text" id="sNameInput" placeholder="Ex: 2026" style="margin-bottom:15px;">
+        <input type="text" id="sClubInput" placeholder="Clube que defendeu" style="margin-bottom:20px;">
+        <button class="btn-main" style="width:100%" onclick="saveSeason()">CRIAR TEMPORADA</button>
     </div>
 </div>
 
@@ -251,7 +268,7 @@
     let state = { players: [], activePlayerIdx: null, activeSeason: null };
 
     window.onload = () => {
-        const saved = localStorage.getItem('marechal_lott_v2');
+        const saved = localStorage.getItem('marechal_lott_v3');
         if(saved) {
             state = JSON.parse(saved);
             renderPlayerList();
@@ -259,7 +276,7 @@
         }
     };
 
-    function save() { localStorage.setItem('marechal_lott_v2', JSON.stringify(state)); }
+    function save() { localStorage.setItem('marechal_lott_v3', JSON.stringify(state)); }
     function showModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
@@ -293,7 +310,7 @@
         document.getElementById('mainDashboard').classList.remove('hidden');
         
         const seasonKeys = Object.keys(player.seasons);
-        state.activeSeason = seasonKeys.length > 0 ? (state.activeSeason && player.seasons[state.activeSeason] ? state.activeSeason : seasonKeys[0]) : null;
+        if(seasonKeys.length > 0 && !state.activeSeason) state.activeSeason = seasonKeys[0];
 
         renderPlayerList();
         renderTabs();
@@ -303,9 +320,10 @@
 
     function saveSeason() {
         const name = document.getElementById('sNameInput').value;
-        if(!name) return;
+        const club = document.getElementById('sClubInput').value;
+        if(!name || !club) return;
         const player = state.players[state.activePlayerIdx];
-        if(!player.seasons[name]) player.seasons[name] = [];
+        if(!player.seasons[name]) player.seasons[name] = { club: club, games: [] };
         state.activeSeason = name;
         save();
         renderTabs();
@@ -339,52 +357,36 @@
             g: parseInt(document.getElementById('mG').value) || 0,
             a: parseInt(document.getElementById('mA').value) || 0
         };
-        state.players[state.activePlayerIdx].seasons[state.activeSeason].push(match);
+        state.players[state.activePlayerIdx].seasons[state.activeSeason].games.push(match);
         save();
         updateStats();
         document.querySelectorAll('.form-section input').forEach(i => i.value = '');
     }
 
     function deleteMatch(matchId) {
-        if(!confirm("Deseja excluir este jogo?")) return;
-        const games = state.players[state.activePlayerIdx].seasons[state.activeSeason];
-        state.players[state.activePlayerIdx].seasons[state.activeSeason] = games.filter(g => g.id !== matchId);
+        if(!confirm("Excluir jogo?")) return;
+        const season = state.players[state.activePlayerIdx].seasons[state.activeSeason];
+        season.games = season.games.filter(g => g.id !== matchId);
         save();
         updateStats();
-    }
-
-    function editMatch(matchId) {
-        const game = state.players[state.activePlayerIdx].seasons[state.activeSeason].find(g => g.id === matchId);
-        if(!game) return;
-
-        document.getElementById('mDate').value = game.date;
-        document.getElementById('mT1').value = game.t1;
-        document.getElementById('mT2').value = game.t2;
-        document.getElementById('mScore').value = game.score;
-        document.getElementById('mComp').value = game.comp;
-        document.getElementById('mG').value = game.g;
-        document.getElementById('mA').value = game.a;
-
-        // Remove o antigo para salvar como novo editado
-        const games = state.players[state.activePlayerIdx].seasons[state.activeSeason];
-        state.players[state.activePlayerIdx].seasons[state.activeSeason] = games.filter(g => g.id !== matchId);
-        window.scrollTo({ top: 300, behavior: 'smooth' });
     }
 
     function updateStats() {
         const table = document.getElementById('matchTable');
         const summary = document.getElementById('compSummary');
+        const content = document.getElementById('seasonContent');
         
-        table.innerHTML = '';
-        summary.innerHTML = '';
-        document.getElementById('ovGames').innerText = '0';
-        document.getElementById('ovGoals').innerText = '0';
-        document.getElementById('ovAssists').innerText = '0';
-        document.getElementById('ovTotal').innerText = '0';
+        table.innerHTML = ''; summary.innerHTML = '';
+        if(state.activePlayerIdx === null || !state.activeSeason) {
+            content.classList.add('hidden');
+            return;
+        }
+        content.classList.remove('hidden');
 
-        if(state.activePlayerIdx === null || !state.activeSeason) return;
-        
-        let games = [...state.players[state.activePlayerIdx].seasons[state.activeSeason]];
+        const seasonData = state.players[state.activePlayerIdx].seasons[state.activeSeason];
+        document.getElementById('displayClub').innerText = seasonData.club;
+
+        let games = [...seasonData.games];
         games.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         let ovG = 0, ovA = 0, ovJ = games.length;
@@ -407,7 +409,6 @@
                     <td>${g.g}</td>
                     <td>${g.a}</td>
                     <td class="actions">
-                        <button class="btn-edit" onclick="editMatch(${g.id})">✎</button>
                         <button class="btn-delete" onclick="deleteMatch(${g.id})">✖</button>
                     </td>
                 </tr>`;
@@ -433,3 +434,4 @@
 </script>
 </body>
 </html>
+```[cite: 1]
