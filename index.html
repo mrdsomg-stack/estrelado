@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics de Atletas | Marechal Lott</title>
+    <style>
+        :root {
+            --bg-color: #121417;
+            --card-bg: #1c1f24;
+            --accent-green: #00cba9;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --gold: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .player-info h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .player-info p {
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        .btn-exit {
+            background-color: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        /* Formulários */
+        .section-title {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        input, select {
+            background: #2a2e35;
+            border: 1px solid #3f444e;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-green);
+        }
+
+        button.add-btn {
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button.add-btn:hover {
+            background: var(--accent-green);
+            color: #000;
+        }
+
+        /* Tabela de Jogos */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            padding: 15px;
+            border-bottom: 1px solid #3f444e;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tag-comp {
+            font-size: 0.7rem;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="player-info">
+            <h1 id="displayName">Novo Jogador</h1>
+            <p id="displayAge">Aguardando cadastro...</p>
+        </div>
+        <button class="btn-exit" onclick="location.reload()">REINICIAR</button>
+    </header>
+
+    <!-- Cadastro Inicial -->
+    <div class="section-title">Cadastro do Atleta</div>
+    <div class="form-row">
+        <input type="text" id="nameInput" placeholder="Nome do Jogador">
+        <input type="date" id="birthInput">
+        <button class="add-btn" onclick="setProfile()">Definir Perfil</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">Jogos</span>
+            <span class="stat-value" id="totalGames">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Gols</span>
+            <span class="stat-value" id="totalGoals">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Assistências</span>
+            <span class="stat-value" id="totalAssists">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Competições</span>
+            <span class="stat-value" id="totalComps">0</span>
+        </div>
+    </div>
+
+    <!-- Cadastro de Partida -->
+    <div class="section-title">Registrar Nova Partida</div>
+    <div class="form-row">
+        <input type="date" id="matchDate">
+        <input type="text" id="team1" placeholder="Time Casa">
+        <input type="text" id="team2" placeholder="Time Fora">
+        <input type="text" id="score" placeholder="Placar (ex: 2-1)">
+        <select id="competition">
+            <option value="Liga Nacional">Liga Nacional</option>
+            <option value="Copa">Copa</option>
+            <option value="Champions">Champions</option>
+            <option value="Amistoso">Amistoso</option>
+        </select>
+        <input type="number" id="goals" placeholder="Gols" min="0">
+        <input type="number" id="assists" placeholder="Assists" min="0">
+        <button class="add-btn" onclick="addMatch()">+ Adicionar Jogo</button>
+    </div>
+
+    <!-- Tabela de Temporada -->
+    <div class="section-title">Histórico da Temporada</div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>DATA</th>
+                    <th>COMPETIÇÃO</th>
+                    <th>PARTIDA</th>
+                    <th>PLACAR</th>
+                    <th>G</th>
+                    <th>A</th>
+                </tr>
+            </thead>
+            <tbody id="matchTableBody">
+                <!-- Jogos aparecerão aqui -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let stats = {
+        games: 0,
+        goals: 0,
+        assists: 0,
+        competitions: new Set()
+    };
+
+    function setProfile() {
+        const name = document.getElementById('nameInput').value;
+        const birth = document.getElementById('birthInput').value;
+
+        if(!name || !birth) return alert("Preencha nome e data!");
+
+        document.getElementById('displayName').innerText = name;
+        
+        // Cálculo de idade simples
+        const birthDate = new Date(birth);
+        const age = new Date().getFullYear() - birthDate.getFullYear();
+        document.getElementById('displayAge').innerText = `Nascido em ${birthDate.getFullYear()} (${age} anos)`;
+    }
+
+    function addMatch() {
+        const date = document.getElementById('matchDate').value;
+        const t1 = document.getElementById('team1').value;
+        const t2 = document.getElementById('team2').value;
+        const score = document.getElementById('score').value;
+        const comp = document.getElementById('competition').value;
+        const goals = parseInt(document.getElementById('goals').value) || 0;
+        const assists = parseInt(document.getElementById('assists').value) || 0;
+
+        if(!date || !t1 || !t2) return alert("Preencha os dados da partida!");
+
+        // Atualiza Lógica
+        stats.games++;
+        stats.goals += goals;
+        stats.assists += assists;
+        stats.competitions.add(comp);
+
+        // Atualiza UI Dashboard
+        document.getElementById('totalGames').innerText = stats.games;
+        document.getElementById('totalGoals').innerText = stats.goals;
+        document.getElementById('totalAssists').innerText = stats.assists;
+        document.getElementById('totalComps').innerText = stats.competitions.size;
+
+        // Adiciona na Tabela
+        const tbody = document.getElementById('matchTableBody');
+        const row = `
+            <tr>
+                <td>${date.split('-').reverse().join('/')}</td>
+                <td><span class="tag-comp">${comp}</span></td>
+                <td>${t1} vs ${t2}</td>
+                <td>${score}</td>
+                <td style="color: var(--gold)">${goals}</td>
+                <td style="color: var(--gold)">${assists}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+
+        // Limpa campos de desempenho
+        document.getElementById('goals').value = '';
+        document.getElementById('assists').value = '';
+    }
+</script>
+
+</body>
+</html>
