@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marechal Lott | Multi-Player Pro</title>
+    <title>Marechal Lott | Gestão Total</title>
     <style>
         :root {
             --bg-color: #0f1113;
@@ -14,6 +14,7 @@
             --gold: #f59e0b;
             --glass: rgba(255, 255, 255, 0.03);
             --overall-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --danger: #ff4d4d;
         }
 
         body {
@@ -36,7 +37,6 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -77,9 +77,6 @@
             transition: 0.2s;
         }
 
-        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
-
-        /* Lista de Jogadores Sidebar/Top */
         .player-selector {
             display: flex;
             gap: 10px;
@@ -94,7 +91,6 @@
             border-radius: 15px;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.3s;
             min-width: 120px;
             text-align: center;
         }
@@ -104,10 +100,6 @@
             background: rgba(0, 203, 169, 0.1);
         }
 
-        .player-chip h4 { margin: 0; font-size: 0.9rem; }
-        .player-chip span { font-size: 0.7rem; color: var(--text-dim); }
-
-        /* Dash Elements */
         .overall-summary {
             background: var(--overall-gradient);
             padding: 25px;
@@ -170,6 +162,10 @@
         th { text-align: left; color: var(--text-dim); font-size: 0.7rem; padding: 15px; border-bottom: 2px solid #333; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
 
+        .actions { display: flex; gap: 8px; }
+        .btn-edit { color: var(--gold); cursor: pointer; background: none; border: none; font-size: 1rem; }
+        .btn-delete { color: var(--danger); cursor: pointer; background: none; border: none; font-size: 1rem; }
+
         .hidden { display: none; }
     </style>
 </head>
@@ -178,8 +174,8 @@
 <div class="container">
     <header>
         <div>
-            <h1 id="viewTitle">Player Management</h1>
-            <p id="viewSubtitle" style="color: var(--text-dim)">Gerencie seus atletas e temporadas</p>
+            <h1 id="viewTitle">Gestão de Atletas</h1>
+            <p id="viewSubtitle" style="color: var(--text-dim)">Acompanhe o Marechal Lott City</p>
         </div>
         <div style="display: flex; gap: 10px;">
             <button class="btn-main" onclick="showModal('modalPlayer')">+ NOVO JOGADOR</button>
@@ -187,12 +183,8 @@
         </div>
     </header>
 
-    <!-- Lista de Jogadores -->
-    <div class="player-selector" id="playerList">
-        <!-- Jogadores cadastrados aqui -->
-    </div>
+    <div class="player-selector" id="playerList"></div>
 
-    <!-- Dashboard Principal -->
     <div id="mainDashboard" class="hidden">
         <div class="tabs-container" id="seasonTabs"></div>
 
@@ -228,6 +220,7 @@
                     <th>RESULTADO</th>
                     <th>G</th>
                     <th>A</th>
+                    <th>AÇÕES</th>
                 </tr>
             </thead>
             <tbody id="matchTable"></tbody>
@@ -235,7 +228,7 @@
     </div>
 </div>
 
-<!-- Modais -->
+<!-- Modal Cadastro Atleta -->
 <div id="modalPlayer" class="modal">
     <div class="modal-content">
         <h2>Cadastrar Atleta</h2>
@@ -245,21 +238,17 @@
     </div>
 </div>
 
+<!-- Modal Nova Temporada -->
 <div id="modalSeason" class="modal">
     <div class="modal-content">
         <h2>Nova Temporada</h2>
-        <input type="text" id="sNameInput" placeholder="Ex: Temporada 2026" style="margin-bottom:20px;">
+        <input type="text" id="sNameInput" placeholder="Ex: 2026" style="margin-bottom:20px;">
         <button class="btn-main" style="width:100%" onclick="saveSeason()">CRIAR</button>
     </div>
 </div>
 
 <script>
-    // State management
-    let state = {
-        players: [], // [{ name, birth, seasons: { '2026': [] } }]
-        activePlayerIdx: null,
-        activeSeason: null
-    };
+    let state = { players: [], activePlayerIdx: null, activeSeason: null };
 
     window.onload = () => {
         const saved = localStorage.getItem('marechal_lott_v2');
@@ -271,7 +260,6 @@
     };
 
     function save() { localStorage.setItem('marechal_lott_v2', JSON.stringify(state)); }
-
     function showModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
 
@@ -279,7 +267,6 @@
         const name = document.getElementById('pNameInput').value;
         const birth = document.getElementById('pBirthInput').value;
         if(!name || !birth) return;
-
         state.players.push({ name, birth, seasons: {} });
         save();
         renderPlayerList();
@@ -305,13 +292,8 @@
         document.getElementById('btnSeason').classList.remove('hidden');
         document.getElementById('mainDashboard').classList.remove('hidden');
         
-        // Auto-select first season if exists
         const seasonKeys = Object.keys(player.seasons);
-        if(seasonKeys.length > 0 && !state.activeSeason) {
-            state.activeSeason = seasonKeys[0];
-        } else if (seasonKeys.length === 0) {
-            state.activeSeason = null;
-        }
+        state.activeSeason = seasonKeys.length > 0 ? (state.activeSeason && player.seasons[state.activeSeason] ? state.activeSeason : seasonKeys[0]) : null;
 
         renderPlayerList();
         renderTabs();
@@ -346,8 +328,9 @@
     }
 
     function addMatch() {
-        if(!state.activeSeason) return alert("Crie uma temporada primeiro!");
+        if(!state.activeSeason) return;
         const match = {
+            id: Date.now(),
             date: document.getElementById('mDate').value,
             t1: document.getElementById('mT1').value,
             t2: document.getElementById('mT2').value,
@@ -362,17 +345,46 @@
         document.querySelectorAll('.form-section input').forEach(i => i.value = '');
     }
 
+    function deleteMatch(matchId) {
+        if(!confirm("Deseja excluir este jogo?")) return;
+        const games = state.players[state.activePlayerIdx].seasons[state.activeSeason];
+        state.players[state.activePlayerIdx].seasons[state.activeSeason] = games.filter(g => g.id !== matchId);
+        save();
+        updateStats();
+    }
+
+    function editMatch(matchId) {
+        const game = state.players[state.activePlayerIdx].seasons[state.activeSeason].find(g => g.id === matchId);
+        if(!game) return;
+
+        document.getElementById('mDate').value = game.date;
+        document.getElementById('mT1').value = game.t1;
+        document.getElementById('mT2').value = game.t2;
+        document.getElementById('mScore').value = game.score;
+        document.getElementById('mComp').value = game.comp;
+        document.getElementById('mG').value = game.g;
+        document.getElementById('mA').value = game.a;
+
+        // Remove o antigo para salvar como novo editado
+        const games = state.players[state.activePlayerIdx].seasons[state.activeSeason];
+        state.players[state.activePlayerIdx].seasons[state.activeSeason] = games.filter(g => g.id !== matchId);
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+
     function updateStats() {
         const table = document.getElementById('matchTable');
         const summary = document.getElementById('compSummary');
+        
         table.innerHTML = '';
         summary.innerHTML = '';
+        document.getElementById('ovGames').innerText = '0';
+        document.getElementById('ovGoals').innerText = '0';
+        document.getElementById('ovAssists').innerText = '0';
+        document.getElementById('ovTotal').innerText = '0';
 
-        if(!state.activeSeason) return;
+        if(state.activePlayerIdx === null || !state.activeSeason) return;
         
-        let games = state.players[state.activePlayerIdx].seasons[state.activeSeason];
-        
-        // ORDEM CRESCENTE POR DATA
+        let games = [...state.players[state.activePlayerIdx].seasons[state.activeSeason]];
         games.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         let ovG = 0, ovA = 0, ovJ = games.length;
@@ -383,7 +395,6 @@
             if(!comps[g.comp]) comps[g.comp] = { j: 0, g: 0, a: 0 };
             comps[g.comp].j++; comps[g.comp].g += g.g; comps[g.comp].a += g.a;
 
-            // FORMATO DIA/MES/ANO
             const d = g.date.split('-');
             const formattedDate = d.length === 3 ? `${d[2]}/${d[1]}/${d[0]}` : g.date;
 
@@ -395,8 +406,11 @@
                     <td>${g.score}</td>
                     <td>${g.g}</td>
                     <td>${g.a}</td>
-                </tr>
-            `;
+                    <td class="actions">
+                        <button class="btn-edit" onclick="editMatch(${g.id})">✎</button>
+                        <button class="btn-delete" onclick="deleteMatch(${g.id})">✖</button>
+                    </td>
+                </tr>`;
         });
 
         document.getElementById('ovGames').innerText = ovJ;
@@ -413,8 +427,7 @@
                         <span>G: <b>${comps[c].g}</b></span>
                         <span>A: <b>${comps[c].a}</b></span>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     }
 </script>
